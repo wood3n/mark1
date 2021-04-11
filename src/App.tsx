@@ -1,7 +1,7 @@
-import React from 'react';
+import { Button } from 'antd';
 
 function App() {
-  return <div></div>;
+  return <Button>测试</Button>;
 }
 
 export default App;
