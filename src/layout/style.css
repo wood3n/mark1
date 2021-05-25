@@ -1,0 +1,42 @@
+.main-layout-header {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #282c34;
+  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%),
+    0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+
+.main-layout-header li,
+a,
+button {
+  -webkit-app-region: no-drag;
+  text-decoration: none;
+}
+
+.header-tool-icon {
+  font-size: 16px;
+}
+
+.main-layout-footer {
+  position: fixed;
+  top: auto;
+  bottom: 0;
+  width: 100%;
+  background-color: #282c34;
+  box-shadow: 0px -2px 4px -1px rgb(0 0 0 / 20%), 0px -4px 5px 0px rgb(0 0 0 / 14%),
+    0px -1px 10px 0px rgb(0 0 0 / 12%);
+}
+
+.menuicon-spin {
+  transition: transform 0.5s linear !important;
+  -webkit-transition: transform 0.5s cubic-bezier(0.7, 0.01, 0.28, 1.03) !important;
+}
+
+.menuicon-spin:hover {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}

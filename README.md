@@ -88,3 +88,8 @@ phantomjs_cdnurl=http://npm.taobao.org/mirrors/phantomjs
 ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/
 ```
 
+## reference
+
+- create-react-app
+- electron
+- classnames

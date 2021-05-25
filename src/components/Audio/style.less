@@ -1,0 +1,29 @@
+.slider {
+  :global {
+    .ant-slider-handle {
+      display: none;
+    }
+  }
+}
+
+.sliderFocused {
+  :global {
+    .ant-slider-handle {
+      display: block;
+    }
+  }
+}
+
+.playBar {
+  height: 100%;
+  padding: 4px 24px 0 24px;
+
+  svg {
+    font-size: 18px;
+    width: 18px;
+    cursor: pointer;
+    :hover {
+      color: #4090eb;
+    }
+  }
+}

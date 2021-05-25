@@ -1,6 +1,19 @@
-@import '~antd/dist/antd.css';
-
-* {
+*,
+:after,
+:before {
   box-sizing: border-box;
   margin: 0;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif !important;
+}
+
+body {
+  background-color: #282c34;
+}
+
+.ant-image {
+  vertical-align: middle;
+}
+
+.ant-image-img {
+  border-radius: 4px;
 }

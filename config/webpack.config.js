@@ -26,6 +26,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 
 const postcssNormalize = require('postcss-normalize');
 
@@ -52,8 +53,6 @@ const swSrc = paths.swSrc;
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
-const sassRegex = /\.(scss|sass)$/;
-const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 const hasJsxRuntime = (() => {
   if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
@@ -308,15 +307,12 @@ module.exports = function (webpackEnv) {
         .map((ext) => `.${ext}`)
         .filter((ext) => useTypeScript || !ext.includes('ts')),
       alias: {
-        // Support React Native Web
-        // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-        'react-native': 'react-native-web',
+        '@': paths.appSrc,
         // Allows for better profiling with ReactDevTools
         ...(isEnvProductionProfile && {
           'react-dom$': 'react-dom/profiling',
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
-        ...(modules.webpackAliases || {}),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -400,6 +396,8 @@ module.exports = function (webpackEnv) {
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
                     require.resolve('react-refresh/babel'),
+                  ['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }],
+                  '@babel/plugin-syntax-dynamic-import',
                 ].filter(Boolean),
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -466,9 +464,29 @@ module.exports = function (webpackEnv) {
                 },
               }),
             },
+            // "file" loader makes sure those assets get served by WebpackDevServer.
+            // When you `import` an asset, you get its (virtual) filename.
+            // In production, they would get copied to the `build` folder.
+            // This loader doesn't use a "test" so it will catch all modules
+            // that fall through the other loaders.
+            {
+              loader: require.resolve('file-loader'),
+              // Exclude `js` files to keep "css" loader working as it injects
+              // its runtime that would otherwise be processed through "file" loader.
+              // Also exclude `html` and `json` extensions so they get processed
+              // by webpacks internal loaders.
+              // fix: 必须排除css,less文件类型，否则antd的样式无法生效
+              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/, /\.less$/, /\.css$/],
+              options: {
+                name: 'static/media/[name].[hash:8].[ext]',
+              },
+            },
+            // ** STOP ** Are you adding a new loader?
+            // Make sure to add the new loader(s) before the "file" loader.
             // 添加less
             {
               test: /\.less$/,
+              exclude: /node_modules/,
               use: [
                 ...getStyleLoaders({
                   importLoaders: 1,
@@ -482,29 +500,61 @@ module.exports = function (webpackEnv) {
                   options: {
                     lessOptions: {
                       paths: [path.resolve(__dirname, 'src')],
+                      javascriptEnabled: true,
                     },
                   },
                 },
               ],
+              sideEffects: true,
             },
-            // "file" loader makes sure those assets get served by WebpackDevServer.
-            // When you `import` an asset, you get its (virtual) filename.
-            // In production, they would get copied to the `build` folder.
-            // This loader doesn't use a "test" so it will catch all modules
-            // that fall through the other loaders.
+            // antd less配置
             {
-              loader: require.resolve('file-loader'),
-              // Exclude `js` files to keep "css" loader working as it injects
-              // its runtime that would otherwise be processed through "file" loader.
-              // Also exclude `html` and `json` extensions so they get processed
-              // by webpacks internal loaders.
-              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-              options: {
-                name: 'static/media/[name].[hash:8].[ext]',
-              },
+              test: /\.less$/,
+              include: /node_modules/,
+              use: [
+                isEnvDevelopment && require.resolve('style-loader'),
+                isEnvProduction && {
+                  loader: MiniCssExtractPlugin.loader,
+                  // css is located in `static/css`, use '../../' to locate index.html folder
+                  // in production `paths.publicUrlOrPath` can be a relative path
+                  options: paths.publicUrlOrPath.startsWith('.') ? { publicPath: '../../' } : {},
+                },
+                {
+                  loader: 'css-loader',
+                  options: {
+                    modules: false,
+                  },
+                },
+                {
+                  loader: 'less-loader', // compiles Less to CSS
+                  options: {
+                    lessOptions: {
+                      javascriptEnabled: true,
+                      modifyVars: {
+                        'primary-color': '#4090EB',
+                        'component-background': '#282C34',
+                        'background-color-light': '#282C34',
+                        'heading-color': '#ffffff',
+                        'border-radius-base': '4px',
+                        'layout-header-background': '#282C34',
+                        'layout-body-background': '#282C34',
+                        'text-color': '#ffffff',
+                        'text-color-secondary': '#979797',
+                        'table-row-hover-bg': 'rgb(0 0 0 / 18%)',
+                        'table-selected-row-bg': '#4090EB',
+                        'slider-track-background-color': '#6ab1f7',
+                        'slider-track-background-color-hover': '#4090EB',
+                        'tooltip-bg': '#4E4E4E',
+                        'popover-bg': '#4E4E4E',
+                        'message-notice-content-bg': '#4E4E4E',
+                        'alert-message-color': '#ffffff',
+                      },
+                    },
+                  },
+                },
+              ].filter(Boolean),
+              sideEffects: true,
             },
-            // ** STOP ** Are you adding a new loader?
-            // Make sure to add the new loader(s) before the "file" loader.
           ],
         },
       ],
@@ -520,6 +570,7 @@ module.exports = function (webpackEnv) {
           },
           isEnvProduction
             ? {
+                publicPath: './',
                 minify: {
                   removeComments: true,
                   collapseWhitespace: true,
@@ -536,6 +587,8 @@ module.exports = function (webpackEnv) {
             : undefined
         )
       ),
+      // 使用dayjs替换momentjs
+      new AntdDayjsWebpackPlugin(),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358

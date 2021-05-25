@@ -1,0 +1,36 @@
+.login {
+  height: 100vh;
+  background: none;
+
+  header {
+    background: none;
+  }
+}
+
+.loginHeader {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  text-align: right;
+
+  button,
+  a {
+    -webkit-app-region: no-drag;
+    text-decoration: none;
+  }
+}
+
+.loginForm {
+  flex: 1 1 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  & > form {
+    flex: 1 1 auto;
+  }
+}

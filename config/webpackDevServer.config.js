@@ -11,13 +11,14 @@ const getHttpsConfig = require('./getHttpsConfig');
 const { exec } = require('child_process');
 
 const host = process.env.HOST || '0.0.0.0';
+const TARGET = process.env.TARGET;
 const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/sockjs-node'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
 module.exports = function (proxy, allowedHost) {
   return {
-    open: false,
+    open: TARGET === 'web',
     // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
     // websites from potentially accessing local content through DNS rebinding:
     // https://github.com/webpack/webpack-dev-server/issues/887
@@ -134,7 +135,7 @@ module.exports = function (proxy, allowedHost) {
       // it used the same host and port.
       // https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
       app.use(noopServiceWorkerMiddleware(paths.publicUrlOrPath));
-      exec('e-start');
+      exec('electron .');
     },
   };
 };
