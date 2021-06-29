@@ -1,0 +1,46 @@
+.simpleLayout {
+	height: 100vh;
+	background: none;
+
+	header {
+		background: none;
+	}
+}
+
+.header {
+	-webkit-app-region: drag;
+	-webkit-user-select: none;
+	user-select: none;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	padding: 0 24px;
+	box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%);
+	z-index: 999;
+
+	button,
+	a {
+		-webkit-app-region: no-drag;
+		text-decoration: none;
+	}
+}
+
+.content {
+	padding: 24px;
+	overflow: auto;
+	margin-top: 65px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.content::-webkit-scrollbar {
+	width: 10px;
+}
+
+.content::-webkit-scrollbar-thumb {
+	background: #383e4b;
+	border-radius: 2px;
+}

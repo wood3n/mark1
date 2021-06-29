@@ -1,45 +1,28 @@
-import { useEffect } from 'react';
-import { message, Spin } from 'antd';
-import { useUser } from '@/models';
-import { HttpCode } from '@/constants';
-import { history } from '@/utils';
-import BasicLayout from '../BasicLayout';
+import { useEffect } from "react";
+import { message, Spin } from "antd";
+import { Redirect } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { useUser } from "@/models";
+// import { initUser } from "@/models/user";
+import { HttpCode } from "@/constants";
+import { history } from "@/utils";
+import BasicLayout, { BasicLayoutProps } from "../BasicLayout";
 
 /**
  * 登录校验
  * FIXME: 用useRecoilValueLoadable和React.Suspense重写这里的逻辑
  */
-const Auth: React.FC = (props) => {
-  const { user, reqLoginStatus, saveUser } = useUser();
+const Auth: React.FC<BasicLayoutProps> = (props) => {
+	// const user = useRecoilValue(initUser);
+	const { user } = useUser();
 
-  const redirectToLogin = () => {
-    message.error('无法获取用户信息，请重新登录');
-    history.replace('/login');
-  };
+	console.log(user);
 
-  const getLoginStatus = async () => {
-    try {
-      const { data } = await reqLoginStatus.run();
-      if (data?.code === HttpCode.OK && data?.profile) {
-        // 保存用户状态
-        saveUser(data?.profile);
-      } else {
-        redirectToLogin();
-      }
-    } catch {
-      redirectToLogin();
-    }
-  };
+	if (!user) {
+		return <Redirect to="/login" />;
+	}
 
-  useEffect(() => {
-    getLoginStatus();
-  }, []);
-
-  if (!user) {
-    return <Spin />;
-  }
-
-  return <BasicLayout {...props} />;
+	return <BasicLayout {...props} />;
 };
 
 export default Auth;

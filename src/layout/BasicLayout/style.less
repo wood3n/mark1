@@ -1,104 +1,97 @@
 .layout {
-  height: 100vh;
-  overflow: hidden;
+	height: 100vh;
+	overflow: hidden;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  padding: 0 24px;
-  width: 100%;
-  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%);
-  -webkit-app-region: drag;
-  -webkit-user-select: none;
-  user-select: none;
-  z-index: 999;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: sticky;
+	top: 0;
+	padding: 0 24px;
+	width: 100%;
+	box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%);
+	-webkit-app-region: drag;
+	-webkit-user-select: none;
+	user-select: none;
+	z-index: 999;
 
-  .userAvartar {
-    flex: 0 1 200px;
-    display: flex;
-    align-items: center;
-    color: #ffffff;
-    cursor: pointer;
-  }
+	.userAvartar {
+		flex: 0 1 200px;
+		display: flex;
+		align-items: center;
+		color: #ffffff;
+		cursor: pointer;
+	}
 
-  .userAvartar,
-  li,
-  a,
-  button,
-  input,
-  svg {
-    -webkit-app-region: no-drag;
-  }
+	.userAvartar,
+	li,
+	a,
+	button,
+	input,
+	svg {
+		-webkit-app-region: no-drag;
+		// 这里避免input带有placeholder的情况下输入不会清空placeholder
+		user-select: inherit;
+	}
 
-  span[role='img'] {
-    font-size: 18px;
-    color: #ffffff;
+	span[role="img"] {
+		font-size: 18px;
+		color: #ffffff;
 
-    &:hover {
-      color: #4090eb !important;
-    }
-  }
+		&:hover {
+			color: #4090eb !important;
+		}
+	}
 }
 
 .main {
-  .side {
-    position: fixed;
-    height: 100%;
-    overflow: auto;
-    border-right: 1px solid rgb(240 240 240 / 9%);
+	.side {
+		position: fixed;
+		height: 100%;
+		overflow: auto;
+		border-right: 1px solid rgb(240 240 240 / 9%);
 
-    .menu {
-      :global {
-        .ant-menu-item-group > .ant-menu-item-group-title {
-          padding: 8px 24px;
-          color: rgb(255 255 255 / 32%);
-        }
+		.menu {
+			:global {
+				.ant-menu-item-group > .ant-menu-item-group-title {
+					padding: 8px 24px;
+					color: rgb(255 255 255 / 32%);
+				}
 
-        .ant-menu-item {
-          padding-left: 30px !important;
+				.ant-menu-item {
+					padding-left: 30px !important;
 
-          svg {
-            width: 14px;
-            height: 14px;
+					svg {
+						width: 14px;
+						height: 14px;
 
-            path {
-              fill: #bfbfbf;
-            }
-          }
-        }
+						path {
+							fill: #bfbfbf;
+						}
+					}
+				}
 
-        .ant-menu-item-active,
-        .ant-menu-item-selected {
-          svg > path {
-            fill: #ffffff;
-          }
-        }
-      }
-    }
+				.ant-menu-item-active,
+				.ant-menu-item-selected {
+					svg > path {
+						fill: #ffffff;
+					}
+				}
+			}
+		}
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
 
-  .content {
-    padding: 24px;
-    margin-left: 180px;
-    color: #ffffff;
-    overflow: auto;
-    margin-bottom: 65px;
-  }
-
-  .content::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  .content::-webkit-scrollbar-thumb {
-    background: #383e4b;
-    border-radius: 2px;
-  }
+	.content {
+		width: 100%;
+		padding: 24px;
+		color: #ffffff;
+		overflow: auto;
+		margin-bottom: 65px;
+	}
 }

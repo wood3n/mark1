@@ -1,55 +1,54 @@
-import { useState } from 'react';
-import { atom, useRecoilValue, useRecoilState, selector } from 'recoil';
-import { message } from 'antd';
-import { useRequest } from 'ahooks';
-import { getLoginStatus, getUserDetail } from '@/services';
-import { HttpCode } from '@/constants';
+import { useCallback, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { atom, useRecoilValue, useRecoilState, selector } from "recoil";
+import { message } from "antd";
+import { useRequest } from "ahooks";
+import { isNil, isEmpty } from "lodash-es";
+import { getLoginStatus, getUserDetail } from "@/services";
+import { HttpCode } from "@/constants";
 
-const initState = atom<API.User>({
-  key: 'user',
-  default: {},
+const initUserAtom = atom<API.User | null>({
+	key: "user",
+	default: {},
 });
 
-export const initUser = selector({
-  key: 'currentUser',
-  get: async () => {
-    const { data } = await getLoginStatus();
-    console.log(data);
-    return data?.profile;
-  },
+export const initUserState = selector<API.User | null>({
+	key: "currentUser",
+	get: async ({ get }) => {
+		const user = get(initUserAtom);
+		if (!isNil(user) && !isEmpty(user)) {
+			return user;
+		}
+
+		try {
+			const { data } = await getLoginStatus();
+
+			return data?.profile;
+		} catch (error) {
+			return null;
+		}
+	},
+	set: ({ set }, newValue) => set(initUserAtom, newValue),
 });
 
-/**
- * 全局用户信息
- */
 const useUser = () => {
-  const [user, setUser] = useRecoilState(initState);
+	const history = useHistory();
+	const [user, setUser] = useRecoilState(initUserState);
 
-  /**
-   * 请求登录状态
-   */
-  const reqLoginStatus = useRequest(getLoginStatus, {
-    manual: true,
-  });
+	const saveUser = useCallback((data: API.User) => {
+		setUser(data);
+	}, []);
 
-  /**
-   * 获取用户详情
-   */
-  const reqUserDetail = useRequest(getUserDetail, {
-    manual: true,
-  });
+	const logout = () => {
+		setUser(null);
+		history.push("/login");
+	};
 
-  // 保存用户信息
-  const saveUser = (user: API.User) => {
-    setUser(user);
-  };
-
-  return {
-    user,
-    saveUser,
-    reqLoginStatus,
-    reqUserDetail,
-  };
+	return {
+		user,
+		saveUser,
+		logout,
+	};
 };
 
 export default useUser;
